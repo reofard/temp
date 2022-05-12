@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const colors = require("colors");
+const cors = require("cors");
 
 //for error
 const { errorHandle } = require("./middleware/errorMiddleware");
@@ -21,6 +22,12 @@ app.use(express.urlencoded({ extended: false }));
 
 //for errors
 app.use(errorHandle);
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.listen(port, () => {
   console.log(`Server started in port: ${port}`.bgGreen);
