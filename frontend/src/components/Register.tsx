@@ -1,6 +1,10 @@
 import React, { SyntheticEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import Nav from "./Nav";
+
+import { Form } from "react-bootstrap";
 
 const Register = () => {
   interface Iuser {
@@ -17,6 +21,24 @@ const Register = () => {
     password: "",
   });
 
+  const [status, setStatus] = useState<string>("");
+
+  const navigate = useNavigate();
+
+  const emptyFields = () => {
+    if (
+      user.fname === "" ||
+      user.lname === "" ||
+      user.email === "" ||
+      user.password === ""
+    ) {
+      setStatus("Please fill in all fields");
+      console.log("empty field");
+
+      throw new Error("Enter all fields");
+    }
+  };
+
   const printState = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
@@ -25,12 +47,30 @@ const Register = () => {
         user
       );
       let data = registration.data;
-      console.log(data);
 
+      //sets a cookie with user bearer token if runs if account creating is successful
       if (data) {
         console.log("Account created successfully");
         document.cookie = `user=${data.token}`;
       }
+
+      //empties the user state
+      setUser({
+        ...user,
+        fname: "",
+        lname: "",
+        email: "",
+        password: "",
+      });
+
+      setStatus("");
+
+      // navigates you back to hmoe page
+      navigate("/");
+    } catch (error) {
+      setStatus("User with that email already exists");
+      //error logic if there is an empty field
+      emptyFields();
 
       setUser({
         ...user,
@@ -39,43 +79,53 @@ const Register = () => {
         email: "",
         password: "",
       });
-    } catch (error) {
-      console.log(error);
     }
   };
   return (
     <div className="App">
-      <form onSubmit={printState}>
-        fname
-        <input
-          type="text"
-          value={user.fname}
-          onChange={(e) => setUser({ ...user, fname: e.target.value })}
-        />
-        <br />
-        lname{" "}
-        <input
-          type="text"
-          value={user.lname}
-          onChange={(e) => setUser({ ...user, lname: e.target.value })}
-        />{" "}
-        <br />
-        email{" "}
-        <input
-          type="text"
-          value={user.email}
-          onChange={(e) => setUser({ ...user, email: e.target.value })}
-        />{" "}
-        <br />
-        password{" "}
-        <input
-          type="text"
-          value={user.password}
-          onChange={(e) => setUser({ ...user, password: e.target.value })}
-        />{" "}
-        <br />
-        <button type="submit">Sumbit</button>
-      </form>
+      <Nav />
+
+      <h2>Registration</h2>
+      <p className="text-danger">{status}</p>
+      <div className="form">
+        <Form onSubmit={printState}>
+          <Form.Label>First name</Form.Label>
+          <Form.Control
+            type="text"
+            value={user.fname}
+            onChange={(e: any) => setUser({ ...user, fname: e.target.value })}
+            placeholder="First name"
+          />
+          <br />
+          <Form.Label>Last name</Form.Label>
+          <Form.Control
+            type="text"
+            value={user.lname}
+            onChange={(e: any) => setUser({ ...user, lname: e.target.value })}
+            placeholder="Last name"
+          />{" "}
+          <br />
+          <Form.Label> Email</Form.Label>
+          <Form.Control
+            type="text"
+            value={user.email}
+            onChange={(e: any) => setUser({ ...user, email: e.target.value })}
+            placeholder="Email"
+          />{" "}
+          <br />
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="text"
+            value={user.password}
+            onChange={(e: any) =>
+              setUser({ ...user, password: e.target.value })
+            }
+            placeholder="Password"
+          />{" "}
+          <br />
+          <button type="submit">Sumbit</button>
+        </Form>
+      </div>
     </div>
   );
 };
