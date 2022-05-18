@@ -6,6 +6,8 @@ import Nav from "./Nav";
 
 import { Form } from "react-bootstrap";
 
+import "../style/register.css";
+
 const Register = () => {
   interface Iuser {
     fname: string;
@@ -85,7 +87,7 @@ const Register = () => {
     <div className="App">
       <Nav />
 
-      <h2>Registration</h2>
+      <h2 className="text-center">Create Account</h2>
       <p className="text-danger">{status}</p>
       <div className="form">
         <Form onSubmit={printState}>
@@ -123,7 +125,9 @@ const Register = () => {
             placeholder="Password"
           />{" "}
           <br />
-          <button type="submit">Sumbit</button>
+          <button className="btn btn-success" type="submit">
+            Submit
+          </button>
         </Form>
       </div>
     </div>
