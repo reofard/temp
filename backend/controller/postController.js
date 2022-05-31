@@ -2,6 +2,7 @@ const PostModel = require("../model/postModel");
 
 const createPost = async (req, res) => {
   try {
+    //In creator token gets passed
     const { creator, subject, title, content, comments, likes } = req.body;
 
     if (!creator || !subject || !title || !content) {
@@ -11,13 +12,14 @@ const createPost = async (req, res) => {
       throw new Error("Please enter all fields");
     }
 
-    const userExist = await PostModel.findById();
-    if (userExist) {
-      res.status(400).json({
-        message: "user already exits",
-      });
-      throw new Error("User already exists");
-    }
+    // const userExist = await PostModel.findById();
+
+    // if (userExist) {
+    //   res.status(400).json({
+    //     message: "user already exits",
+    //   });
+    //   throw new Error("User already exists");
+    // }
 
     const post = await PostModel.create({
       creator,
@@ -73,4 +75,16 @@ const getPost = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPost };
+// add comments to posts
+const addComment = async (req, res) => {
+  console.log("put run");
+  try {
+    const post = await PostModel.findById(req.params.id);
+
+    console.log(post);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { createPost, getPost, addComment };

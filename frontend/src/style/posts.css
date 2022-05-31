@@ -1,0 +1,14 @@
+.post-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.post {
+  width: 100%;
+}
+
+.comment-section {
+  width: 100vw;
+}

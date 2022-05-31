@@ -35,3 +35,6 @@ app.listen(port, () => {
 
 app.use("/test", router);
 app.use("/post", postRouter);
+
+//to get user with id
+app.post("/:id");

@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 
+import { getCookie } from "../cookies";
+
 const Nav = () => {
   return (
     <>
@@ -15,38 +17,28 @@ const Nav = () => {
 const LoginCheck = () => {
   const navigate = useNavigate();
 
-  //gets user cookie by name
-  function getCookie(cookieName: any) {
-    let cookie: any = {};
-    document.cookie.split(";").forEach(function (el) {
-      let [key, value] = el.split("=");
-      cookie[key.trim()] = value;
-    });
-    return cookie[cookieName];
-  }
-
   const logout = () => {
     document.cookie = `user=`;
-    console.log(document.cookie);
     navigate("/");
   };
 
+  //getCookie from export cookies file
   if (!getCookie("user")) {
     return (
       <>
         <Link to="/register">Register</Link>
 
-        <br />
         <Link to="/login"> Login</Link>
       </>
     );
   } else {
     return (
       <>
+        <br />
+        <br />
         <button className="btn btn-danger" onClick={logout}>
           Log out
         </button>
-        ;
       </>
     );
   }
