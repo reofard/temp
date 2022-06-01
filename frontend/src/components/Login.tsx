@@ -1,6 +1,6 @@
 import { SyntheticEvent, useState } from "react";
 import { Form } from "react-bootstrap";
-import Nav from "./Nav";
+import Header from "./Header";
 
 import axios from "axios";
 
@@ -56,7 +56,7 @@ const Login = () => {
   };
   return (
     <div>
-      <Nav />
+      <Header />
 
       <h2>Login</h2>
       <p>{status}</p>

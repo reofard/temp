@@ -2,7 +2,7 @@ import React, { SyntheticEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
-import Nav from "./Nav";
+import Header from "./Header";
 
 import { Form } from "react-bootstrap";
 
@@ -85,7 +85,7 @@ const Register = () => {
   };
   return (
     <div className="App">
-      <Nav />
+      <Header />
 
       <h2 className="text-center">Create Account</h2>
       <p className="text-danger">{status}</p>

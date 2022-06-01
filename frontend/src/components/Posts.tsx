@@ -1,13 +1,16 @@
-import { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState, SyntheticEvent } from "react";
 import Axios from "axios";
 import "../style/posts.css";
 import { getCookie } from "../cookies";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const Posts = () => {
   const [posts, setPosts] = useState<Array<Object>>([{}]);
 
   const [popUp, setPopUp] = useState<boolean>(false);
+
+  const [postForm, setPostForm] = useState<boolean>(false);
 
   const getPosts = async () => {
     try {
@@ -23,10 +26,9 @@ const Posts = () => {
 
   const createPost = () => {
     if (!getCookie("user")) {
-      console.log("you need to be logged in to create post");
       setPopUp(true);
     } else {
-      console.log("post created");
+      setPostForm(true);
     }
   };
 
@@ -39,8 +41,20 @@ const Posts = () => {
       <button className="btn btn-success" onClick={createPost}>
         Create post
       </button>
+      <br />
 
-      {popUp ? <PopUpModal /> : console.log("Post creation")}
+      {/* When logged in create post form appears else a popup appears asking you to log in */}
+      {popUp ? (
+        <PopUpModal
+          showFn={() => {
+            setPopUp(false);
+          }}
+        />
+      ) : postForm ? (
+        <CreatePost showFn={() => setPostForm(false)} />
+      ) : (
+        console.log("No creation")
+      )}
 
       {posts.map((e: any) => {
         return (
@@ -85,27 +99,129 @@ const Posts = () => {
 
 export default Posts;
 
-const PopUpModal: React.FC = (): ReactElement => {
-  const [show, setShow] = useState(true);
+type cb = () => any;
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+const PopUpModal = (props: { showFn: () => void }) => {
+  const navigate = useNavigate();
 
   return (
-    <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
+    <Modal show={true} onHide={props.showFn} backdrop="static" keyboard={false}>
       <Modal.Header closeButton>
         <Modal.Title>Modal title</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        I will not close if you click outside me. Don't even try to press escape
-        key.
-      </Modal.Body>
+      <Modal.Body>You need to be logged in to create a post</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" onClick={props.showFn}>
           Close
         </Button>
-        <Button variant="primary">Understood</Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
+          Log In
+        </Button>
       </Modal.Footer>
     </Modal>
+  );
+};
+
+const CreatePost = (props: { showFn: () => void }) => {
+  interface ICreatePost {
+    creator: string;
+    subject: string;
+    title: string;
+    content: string;
+    comments: Array<String>;
+    likes: Array<String>;
+  }
+
+  const [post, setPost] = useState<ICreatePost>({
+    creator: `${getCookie("user")}`,
+    subject: "",
+    title: "",
+    content: "",
+    comments: [" "],
+    likes: [" "],
+  });
+
+  const handleSubmit = async (e: SyntheticEvent) => {
+    e.preventDefault();
+
+    try {
+      let thePost = await Axios.post(
+        "http://localhost:5000/post/createPost",
+        post
+      );
+      if (thePost) {
+        console.log("posted created");
+        setPost({
+          creator: `${getCookie("user")}`,
+          subject: "",
+          title: "",
+          content: "",
+          comments: [""],
+          likes: [""],
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <div className="container">
+      <br />
+      <Form>
+        <Form.Select
+          aria-label="Default select example"
+          value={post.subject}
+          onChange={(e: any) => {
+            setPost({ ...post, subject: e.target.value });
+            console.log(e.target.value);
+          }}
+        >
+          <option>Subject</option>
+          <option value="Technology">Technology</option>
+          <option value="TV/Movies">TV/Movies</option>
+          <option value="Sports">Sports</option>
+          <option value="Random">Random</option>
+          <option value="School">School</option>
+          <option value="Personal">Personal</option>
+          <option value="Advice">Advice</option>
+        </Form.Select>
+
+        <br />
+        <Form.Label>Title</Form.Label>
+        <Form.Control
+          type="text"
+          value={post.title}
+          placeholder="Title..."
+          onChange={(e: any) => {
+            setPost({ ...post, title: e.target.value });
+          }}
+        />
+        <br />
+        <Form.Label>Content</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={6}
+          value={post.content}
+          placeholder="Content..."
+          onChange={(e: any) => {
+            setPost({ ...post, content: e.target.value });
+          }}
+        />
+
+        <br />
+        <Button variant="success" onClick={handleSubmit}>
+          Create
+        </Button>
+        <Button variant="danger" onClick={props.showFn}>
+          Close
+        </Button>
+      </Form>
+    </div>
   );
 };
