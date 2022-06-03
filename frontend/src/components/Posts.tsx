@@ -4,6 +4,7 @@ import "../style/posts.css";
 import { getCookie } from "../cookies";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import LoadingScreen from "./LoadingScreen";
 
 const Posts = () => {
   const [posts, setPosts] = useState<Array<Object>>([{}]);
@@ -12,6 +13,12 @@ const Posts = () => {
 
   const [postForm, setPostForm] = useState<boolean>(false);
 
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 500);
+  }, []);
+
   const getPosts = async () => {
     try {
       const { data: response } = await Axios.get(
@@ -19,6 +26,7 @@ const Posts = () => {
       );
 
       setPosts(response.posts);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -38,68 +46,74 @@ const Posts = () => {
 
   return (
     <>
-      <button className="btn btn-success" onClick={createPost}>
-        Create post
-      </button>
-      <br />
-
-      {/* When logged in create post form appears else a popup appears asking you to log in */}
-      {popUp ? (
-        <PopUpModal
-          showFn={() => {
-            setPopUp(false);
-          }}
-        />
-      ) : postForm ? (
-        <CreatePost showFn={() => setPostForm(false)} />
+      {loading ? (
+        <LoadingScreen />
       ) : (
-        console.log("No creation")
-      )}
+        <>
+          <button className="btn btn-success" onClick={createPost}>
+            Create post
+          </button>
+          <br />
+          <br />
+          <br />
 
-      {posts.map((e: any) => {
-        return (
-          <>
-            <div
-              className="container"
-              onClick={() => {
-                console.log(e._id);
-                console.log(e.creator);
+          {/* When logged in create post form appears else a popup appears asking you to log in */}
+          {popUp ? (
+            <PopUpModal
+              showFn={() => {
+                setPopUp(false);
               }}
-            >
-              <div key={e._id} className="post border border-primary">
-                <p>{e.user}</p>
-                <p key={e.content}>{e.content}</p>
-                <div>
-                  <button className="like-btn btn btn-success">Like</button>
+            />
+          ) : postForm ? (
+            <CreatePost showFn={() => setPostForm(false)} />
+          ) : (
+            console.log("No creation")
+          )}
+
+          {posts.map((e: any) => {
+            return (
+              <>
+                <div
+                  className="container"
+                  onClick={() => {
+                    console.log(e._id);
+                    console.log(e.creator);
+                  }}
+                >
+                  <div key={e._id} className="post border border-primary">
+                    <p>{e.user}</p>
+                    <p key={e.content}>{e.content}</p>
+                    <div>
+                      <button className="like-btn btn btn-success">Like</button>
+                    </div>
+                  </div>
+
+                  <div className="comments">
+                    <p>{e.comments}</p>
+                  </div>
+
+                  <div className="form-group">
+                    <form className="comment-form">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Comment..."
+                      />
+                      <button className="btn btn-primary">comment</button>
+                    </form>
+                  </div>
                 </div>
-              </div>
-
-              <div className="comments">
-                <p>{e.comments}</p>
-              </div>
-
-              <div className="form-group">
-                <form className="comment-form">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="Comment..."
-                  />
-                  <button className="btn btn-primary">comment</button>
-                </form>
-              </div>
-            </div>
-            <br />
-          </>
-        );
-      })}
+                <br />
+              </>
+            );
+          })}
+        </>
+      )}
     </>
   );
 };
 
 export default Posts;
-
-type cb = () => any;
 
 const PopUpModal = (props: { showFn: () => void }) => {
   const navigate = useNavigate();
