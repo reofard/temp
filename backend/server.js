@@ -8,7 +8,7 @@ const { errorHandle } = require("./middleware/errorMiddleware");
 
 //for database connect
 const connectDB = require("./config/db");
-const router = require("./routes/user");
+const userRouter = require("./routes/user");
 const postRouter = require("./routes/posts");
 
 connectDB();
@@ -33,7 +33,7 @@ app.listen(port, () => {
   console.log(`Server started in port: ${port}`.bgGreen);
 });
 
-app.use("/test", router);
+app.use("/user", userRouter);
 app.use("/post", postRouter);
 
 //to get user with id

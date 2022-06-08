@@ -37,7 +37,7 @@ const Login = () => {
 
     try {
       let user = await axios.post(
-        "http://localhost:5000/test/login",
+        "http://localhost:5000/user/login",
         userLogin
       );
 

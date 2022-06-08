@@ -12,15 +12,6 @@ const createPost = async (req, res) => {
       throw new Error("Please enter all fields");
     }
 
-    // const userExist = await PostModel.findById();
-
-    // if (userExist) {
-    //   res.status(400).json({
-    //     message: "user already exits",
-    //   });
-    //   throw new Error("User already exists");
-    // }
-
     const post = await PostModel.create({
       creator,
       subject,
@@ -73,6 +64,11 @@ const getPost = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+const getMyPosts = async (req, res) => {
+  try {
+  } catch (error) {}
 };
 
 // add comments to posts

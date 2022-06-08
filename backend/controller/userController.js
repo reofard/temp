@@ -62,7 +62,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -79,7 +79,7 @@ const getUser = async (req, res) => {
         _id: user.id,
         fname: user.fname,
         lname: user.lname,
-        token: generateToken(user.id),
+        token: generateToken(user._id),
       });
     } else {
       res.status(400);
@@ -93,11 +93,23 @@ const getUser = async (req, res) => {
   }
 };
 
+//get user with token
+const getUser = async (req, res) => {
+  const { _id, fname, lname, email } = await User.findById(req.user.id);
+
+  res.status(200).json({
+    id: _id,
+    fName: fname,
+    lname: lname,
+    email: email,
+  });
+};
+
 //Generate JWT
 const generateToken = (id) => {
-  return jwt.sign({ id }, "abc1234", {
+  return jwt.sign({ id }, "abc123", {
     expiresIn: "30d",
   });
 };
 
-module.exports = { registerUser, getUser };
+module.exports = { registerUser, login, getUser };

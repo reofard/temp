@@ -44,6 +44,7 @@ const LoginCheck = () => {
             <button className="btn btn-danger" onClick={logout}>
               Log out
             </button>
+            <Link to="/account"> My Account</Link>
           </Nav>
         </Container>
       </Navbar>
