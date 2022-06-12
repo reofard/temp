@@ -5,6 +5,7 @@ const {
   createPost,
   getPost,
   addComment,
+  getMyPosts,
 } = require("../controller/postController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -14,5 +15,7 @@ router.post("/createPost", createPost);
 router.get("/getPost", getPost);
 
 router.put("/:id", addComment);
+
+router.post("/myPosts", getMyPosts);
 
 module.exports = router;

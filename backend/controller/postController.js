@@ -68,7 +68,26 @@ const getPost = async (req, res) => {
 
 const getMyPosts = async (req, res) => {
   try {
-  } catch (error) {}
+    // const posts = await PostModel.find({
+    //   creator: `${req.user.id}`,
+    // });
+
+    // const posts = await PostModel.find({ creator: `${req.body.token}` });
+    const posts = await PostModel.find({
+      creator: `${req.body.token}`,
+    });
+
+    res.status(201).json({
+      posts,
+    });
+
+    console.log(posts);
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({
+      message: `${error}`,
+    });
+  }
 };
 
 // add comments to posts
@@ -83,4 +102,4 @@ const addComment = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPost, addComment };
+module.exports = { createPost, getPost, getMyPosts, addComment };
