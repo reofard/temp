@@ -43,10 +43,16 @@ const Login = () => {
 
       if (user) {
         console.log("Login successfully");
+        console.log(user.data);
+
         document.cookie = `user=${user.data.token}`;
+
+        //creating cookie for userId for filtering purposes
+        document.cookie = `userId=${user.data._id}`;
       }
 
       console.log(user.data.token);
+      console.log(user.data);
       navigate("/");
     } catch (error) {
       console.log(error);

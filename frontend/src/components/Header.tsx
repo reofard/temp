@@ -23,6 +23,8 @@ const LoginCheck = () => {
 
   const logout = () => {
     document.cookie = `user=`;
+    document.cookie = `userId=`;
+
     navigate("/");
   };
 

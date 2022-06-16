@@ -20,11 +20,16 @@ const MyAccount = () => {
     email: "",
   });
 
-  const [myPosts, setMyPosts] = useState<Array<object>>([]);
+  const [myPosts, setMyPosts] = useState<Array<object>>([{}]);
+
+  const [loading, setLoading] = useState<boolean>(true);
 
   const myToken = getCookie("user");
+  const myUserId = getCookie("userId");
 
-  let dataPromise = Promise.resolve();
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 500);
+  });
 
   //used for bearer toekn input
   const config = {
@@ -44,19 +49,37 @@ const MyAccount = () => {
     }
   };
 
-  const getMyPosts = async () => {
+  // const getMyPosts = async () => {
+  //   try {
+  //     const { data: posts } = await Axios.post(
+  //       "http://localhost:5000/post/myPosts",
+  //       { token: myToken }
+  //     );
+
+  //     console.log(posts);
+  //     console.log(myToken);
+
+  //     setMyPosts(posts);
+
+  //     console.log(myPosts, "h");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const getPosts = async () => {
     try {
-      const { data: posts } = await Axios.post(
-        "http://localhost:5000/post/myPosts",
-        { token: myToken }
+      const { data: response } = await Axios.get(
+        "http://localhost:5000/post/getPost"
       );
 
-      console.log(posts);
-      console.log(myToken);
+      response.posts.map((e: any) => {
+        if (e.creator === myUserId) {
+          console.log(e);
+        }
+      });
 
-      setMyPosts(posts);
-
-      console.log(myPosts, "h");
+      setMyPosts(response.posts);
     } catch (error) {
       console.log(error);
     }
@@ -64,22 +87,32 @@ const MyAccount = () => {
 
   useEffect(() => {
     getInfo();
-    getMyPosts();
+    getPosts();
   }, []);
 
   useEffect(() => {
-    console.log("test");
+    console.log("test 1");
   }, []);
 
-  if (myInfo) {
+  if (!loading && myPosts.length > 1) {
     return (
       <>
         <Header />
         <h1>Welcome {myInfo.fName}</h1>
+        <p>{myToken}</p>
         <div className="container myPosts">
           <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
               <Accordion.Header>My posts</Accordion.Header>
+              {myPosts.map((e: any) => {
+                return (
+                  <Accordion.Body>
+                    <p>{e.title}</p>
+                    <p>{e.content}</p>
+                    <p>{e.creator}</p>
+                  </Accordion.Body>
+                );
+              })}
             </Accordion.Item>
           </Accordion>
         </div>

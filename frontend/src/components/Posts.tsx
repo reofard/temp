@@ -152,7 +152,7 @@ const CreatePost = (props: { showFn: () => void }) => {
   }
 
   const [post, setPost] = useState<ICreatePost>({
-    creator: `${getCookie("user")}`,
+    creator: `${getCookie("userId")}`,
     subject: "",
     title: "",
     content: "",
