@@ -90,6 +90,31 @@ const getMyPosts = async (req, res) => {
   }
 };
 
+const deletePosts = async (req, res) => {
+  try {
+    const post = await PostModel.findById(req.params.id);
+
+    if (!post) {
+      throw new Error(`no post found`);
+    }
+
+    const deleteGoal = await PostModel.findByIdAndDelete(
+      req.params.id,
+      req.body
+    );
+
+    await post.remove();
+
+    res.status(200).json({
+      deleteGoal,
+    });
+  } catch (error) {
+    res.status(401).json({
+      error,
+    });
+  }
+};
+
 // add comments to posts
 const addComment = async (req, res) => {
   console.log("put run");
@@ -102,4 +127,4 @@ const addComment = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPost, getMyPosts, addComment };
+module.exports = { createPost, getPost, getMyPosts, addComment, deletePosts };

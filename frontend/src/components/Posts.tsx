@@ -73,15 +73,11 @@ const Posts = () => {
           {posts.map((e: any) => {
             return (
               <>
-                <div
-                  className="container"
-                  onClick={() => {
-                    console.log(e._id);
-                    console.log(e.creator);
-                  }}
-                >
+                <div className="container">
                   <div key={e._id} className="post border border-primary">
                     <p>{e.user}</p>
+                    <h5>{e.title}</h5>
+                    <h6>{e.subject}</h6>
                     <p key={e.content}>{e.content}</p>
                     <div>
                       <button className="like-btn btn btn-success">Like</button>

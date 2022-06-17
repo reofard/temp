@@ -4,6 +4,8 @@ import { getCookie } from "../cookies";
 import { useEffect, useState } from "react";
 import LoadingScreen from "./LoadingScreen";
 import Accordion from "react-bootstrap/Accordion";
+import { Button, Dropdown } from "react-bootstrap";
+import { deletePost } from "../requests";
 
 const MyAccount = () => {
   interface ImyInfo {
@@ -49,37 +51,22 @@ const MyAccount = () => {
     }
   };
 
-  // const getMyPosts = async () => {
-  //   try {
-  //     const { data: posts } = await Axios.post(
-  //       "http://localhost:5000/post/myPosts",
-  //       { token: myToken }
-  //     );
-
-  //     console.log(posts);
-  //     console.log(myToken);
-
-  //     setMyPosts(posts);
-
-  //     console.log(myPosts, "h");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const getPosts = async () => {
     try {
-      const { data: response } = await Axios.get(
+      let { data: response } = await Axios.get(
         "http://localhost:5000/post/getPost"
       );
 
-      response.posts.map((e: any) => {
-        if (e.creator === myUserId) {
-          console.log(e);
+      let posts = response.posts;
+      let mPost: any = [];
+
+      posts.forEach((p: any) => {
+        if (p.creator === myUserId) {
+          mPost.push(p);
         }
       });
 
-      setMyPosts(response.posts);
+      setMyPosts(mPost);
     } catch (error) {
       console.log(error);
     }
@@ -94,22 +81,43 @@ const MyAccount = () => {
     console.log("test 1");
   }, []);
 
-  if (!loading && myPosts.length > 1) {
+  if (!loading) {
     return (
       <>
         <Header />
         <h1>Welcome {myInfo.fName}</h1>
-        <p>{myToken}</p>
         <div className="container myPosts">
           <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
               <Accordion.Header>My posts</Accordion.Header>
               {myPosts.map((e: any) => {
                 return (
-                  <Accordion.Body>
+                  <Accordion.Body
+                    onClick={() => {
+                      console.log(e._id);
+                    }}
+                  >
                     <p>{e.title}</p>
                     <p>{e.content}</p>
-                    <p>{e.creator}</p>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="secondry">...</Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item
+                          variant="danger"
+                          onClick={() => {
+                            deletePost(e._id);
+                          }}
+                        >
+                          Delete
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => console.log("action 2")}>
+                          Another action
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => console.log("action 3")}>
+                          Something else
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
                   </Accordion.Body>
                 );
               })}
