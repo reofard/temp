@@ -2,9 +2,10 @@ import { useEffect, useState, SyntheticEvent } from "react";
 import Axios from "axios";
 import "../style/posts.css";
 import { getCookie } from "../cookies";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
+import { deletePost } from "../requests";
 
 const Posts = () => {
   const [posts, setPosts] = useState<Array<Object>>([{}]);
@@ -14,6 +15,10 @@ const Posts = () => {
   const [postForm, setPostForm] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [options, setOptions] = useState<boolean>(false);
+
+  const [comment, setComment] = useState<string>("");
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 500);
@@ -38,6 +43,12 @@ const Posts = () => {
     } else {
       setPostForm(true);
     }
+  };
+
+  const createComment = (e: any) => {
+    e.preventDefault();
+    console.log(comment + 1);
+    setComment("");
   };
 
   useEffect(() => {
@@ -72,35 +83,36 @@ const Posts = () => {
 
           {posts.map((e: any) => {
             return (
-              <>
-                <div className="container">
-                  <div key={e._id} className="post border border-primary">
-                    <p>{e.user}</p>
-                    <h5>{e.title}</h5>
-                    <h6>{e.subject}</h6>
-                    <p key={e.content}>{e.content}</p>
-                    <div>
-                      <button className="like-btn btn btn-success">Like</button>
-                    </div>
-                  </div>
-
-                  <div className="comments">
-                    <p>{e.comments}</p>
-                  </div>
-
-                  <div className="form-group">
-                    <form className="comment-form">
-                      <input
-                        className="form-control"
-                        type="text"
-                        placeholder="Comment..."
-                      />
-                      <button className="btn btn-primary">comment</button>
-                    </form>
+              <div className="container">
+                <div key={e._id} className="post border border-primary">
+                  <p>{e.user}</p>
+                  <h5>{e.title}</h5>
+                  <h6>{e.subject}</h6>
+                  <p key={e.content}>{e.content}</p>
+                  <div>
+                    <button className="like-btn btn btn-success">Like</button>
                   </div>
                 </div>
-                <br />
-              </>
+
+                <div className="comments">
+                  <p>{e.comments}</p>
+                </div>
+
+                <div className="form-group">
+                  <form className="comment-form">
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder="Comment..."
+                      value={comment}
+                      onChange={(e: any) => setComment(e.target.value)}
+                    />
+                    <button className="btn btn-primary" onClick={createComment}>
+                      comment
+                    </button>
+                  </form>
+                </div>
+              </div>
             );
           })}
         </>
@@ -233,5 +245,31 @@ const CreatePost = (props: { showFn: () => void }) => {
         </Button>
       </Form>
     </div>
+  );
+};
+
+const PostOptions = (id: string) => {
+  return (
+    <>
+      <Dropdown>
+        <Dropdown.Toggle variant="secondry">...</Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            variant="danger"
+            onClick={() => {
+              deletePost(id);
+            }}
+          >
+            Delete
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => console.log("action 2")}>
+            Another action
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => console.log("action 3")}>
+            Something else
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </>
   );
 };

@@ -121,6 +121,22 @@ const addComment = async (req, res) => {
   try {
     const post = await PostModel.findById(req.params.id);
 
+    if (!posts) {
+      res.status(400);
+      throw new Error("Post not found");
+    }
+
+    //find the post by id and updates it content with a new body
+    const addComment = await PostModel.findByIdAndUpdate(
+      req.parms.id,
+      req.body,
+      {
+        new: true,
+      }
+    );
+
+    res.status(200).json(updatedGoal);
+
     console.log(post);
   } catch (error) {
     console.log(error);

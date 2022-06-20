@@ -110,12 +110,6 @@ const MyAccount = () => {
                         >
                           Delete
                         </Dropdown.Item>
-                        <Dropdown.Item onClick={() => console.log("action 2")}>
-                          Another action
-                        </Dropdown.Item>
-                        <Dropdown.Item onClick={() => console.log("action 3")}>
-                          Something else
-                        </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                   </Accordion.Body>
