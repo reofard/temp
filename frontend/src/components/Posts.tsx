@@ -20,6 +20,9 @@ const Posts = () => {
 
   const [comment, setComment] = useState<string>("");
 
+  //tempHold For comments
+  const [postComments, setPostComments] = useState<Array<string>>([]);
+
   useEffect(() => {
     setTimeout(() => setLoading(false), 500);
   }, []);
@@ -45,10 +48,29 @@ const Posts = () => {
     }
   };
 
-  const createComment = (e: any) => {
-    e.preventDefault();
-    console.log(comment + 1);
-    setComment("");
+  const createComment = async (id: string, body: string) => {
+    try {
+      const { data: response } = await Axios.put(
+        `http://localhost:5000/post/addComment/${id}`
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const test = () => {};
+
+  const addComment = async (id: string, body: object) => {
+    try {
+      const { data: response } = await Axios.put(
+        `http://localhost:5000/post/addComment/${id}`,
+        body
+      );
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -104,11 +126,26 @@ const Posts = () => {
                       className="form-control"
                       type="text"
                       placeholder="Comment..."
-                      value={comment}
                       onChange={(e: any) => setComment(e.target.value)}
                     />
-                    <button className="btn btn-primary" onClick={createComment}>
-                      comment
+                    <button
+                      className="btn btn-primary"
+                      onClick={(event: any) => {
+                        event.preventDefault();
+                        setPostComments(e.comments);
+
+                        setPostComments((c: any) => {
+                          return [...c, comment];
+                        });
+
+                        const newBody = { ...e, comments: postComments };
+                        console.log(newBody);
+                        console.log(e._id);
+
+                        addComment(e._id, newBody);
+                      }}
+                    >
+                      Comment
                     </button>
                   </form>
                 </div>
@@ -164,7 +201,7 @@ const CreatePost = (props: { showFn: () => void }) => {
     subject: "",
     title: "",
     content: "",
-    comments: [" "],
+    comments: [],
     likes: [" "],
   });
 

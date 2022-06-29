@@ -25,7 +25,7 @@ const LoginCheck = () => {
     document.cookie = `user=`;
     document.cookie = `userId=`;
 
-    navigate("/");
+    // navigate("/");
   };
 
   //getCookie from export cookies file
@@ -41,14 +41,13 @@ const LoginCheck = () => {
   } else {
     return (
       <Navbar bg="light" expand="lg">
-        <Container>
-          <Nav className="me-auto">
-            <button className="btn btn-danger" onClick={logout}>
-              Log out
-            </button>
-            <Link to="/account"> My Account</Link>
-          </Nav>
-        </Container>
+        <Nav className="me-auto">
+          <Link to="/account"> My Account</Link>
+
+          <Link to="/" className="text text-danger" onClick={logout}>
+            Log out
+          </Link>
+        </Nav>
       </Navbar>
     );
   }

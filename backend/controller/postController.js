@@ -135,7 +135,7 @@ const addComment = async (req, res) => {
       }
     );
 
-    res.status(200).json(updatedGoal);
+    res.status(200).json(addComment);
 
     console.log(post);
   } catch (error) {
@@ -143,4 +143,10 @@ const addComment = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getPost, getMyPosts, addComment, deletePosts };
+module.exports = {
+  createPost,
+  getPost,
+  getMyPosts,
+  addComment,
+  deletePosts,
+};
