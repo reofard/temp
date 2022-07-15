@@ -21,6 +21,6 @@ router.post("/myPosts", getMyPosts);
 
 router.delete("/:id", deletePosts);
 
-router.put("addComment/:id", addComment);
+router.put("/:id", addComment);
 
 module.exports = router;

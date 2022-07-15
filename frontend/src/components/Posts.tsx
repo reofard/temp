@@ -48,26 +48,15 @@ const Posts = () => {
     }
   };
 
-  const createComment = async (id: string, body: string) => {
-    try {
-      const { data: response } = await Axios.put(
-        `http://localhost:5000/post/addComment/${id}`
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const test = () => {};
-
   const addComment = async (id: string, body: object) => {
     try {
       const { data: response } = await Axios.put(
-        `http://localhost:5000/post/addComment/${id}`,
+        `http://localhost:5000/post/${id}`,
         body
       );
 
       console.log(response);
+      console.log("thtis is add comment");
     } catch (error) {
       console.log(error);
     }
@@ -97,10 +86,8 @@ const Posts = () => {
                 setPopUp(false);
               }}
             />
-          ) : postForm ? (
-            <CreatePost showFn={() => setPostForm(false)} />
           ) : (
-            console.log("No creation")
+            postForm && <CreatePost showFn={() => setPostForm(false)} />
           )}
 
           {posts.map((e: any) => {
@@ -117,6 +104,9 @@ const Posts = () => {
                 </div>
 
                 <div className="comments">
+                  {/* {e.comments.forEach((c: any) => {
+                    <p>{c}</p>;
+                  })} */}
                   <p>{e.comments}</p>
                 </div>
 
@@ -132,17 +122,23 @@ const Posts = () => {
                       className="btn btn-primary"
                       onClick={(event: any) => {
                         event.preventDefault();
-                        setPostComments(e.comments);
+                        if (!getCookie("user")) {
+                          setPopUp(true);
+                        } else {
+                          event.preventDefault();
+                          setPostComments(e.comments);
+                          console.log(postComments);
 
-                        setPostComments((c: any) => {
-                          return [...c, comment];
-                        });
+                          setPostComments((c: any) => {
+                            return [...c, comment];
+                          });
 
-                        const newBody = { ...e, comments: postComments };
-                        console.log(newBody);
-                        console.log(e._id);
+                          console.log(postComments);
 
-                        addComment(e._id, newBody);
+                          addComment(e._id, postComments);
+
+                          console.log(e.comments);
+                        }
                       }}
                     >
                       Comment
@@ -202,7 +198,7 @@ const CreatePost = (props: { showFn: () => void }) => {
     title: "",
     content: "",
     comments: [],
-    likes: [" "],
+    likes: [],
   });
 
   const handleSubmit = async (e: SyntheticEvent) => {
