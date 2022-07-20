@@ -19,7 +19,7 @@ const postModel = mongoose.Schema(
       require: true,
     },
     comments: {
-      type: [String],
+      type: [Object],
       require: false,
     },
     likes: {

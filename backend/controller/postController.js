@@ -119,29 +119,52 @@ const deletePosts = async (req, res) => {
 const addComment = async (req, res) => {
   console.log("put run");
   try {
+    //const post = await PostModel.findById(req.body.comment_id);
     const post = await PostModel.findById(req.params.id);
 
     if (!post) {
       res.status(400);
       console.log("error, not fount");
       throw new Error("Post not found");
+    } else {
+      console.log(post);
     }
 
-    //find the post by id and updates it content with a new body
-    const addComment = await PostModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
+    //updates post using post id and pushes new data to array
+    const comment = await PostModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { $push: { comments: req.body.nc } }
     );
 
-    res.status(200).json(addComment);
+    res.status(200).json(comment);
 
     console.log(post);
   } catch (error) {
     console.log(error);
     console.log(`error occured`);
+  }
+};
+
+const likePost = async (req, res) => {
+  console.log(req.params.id);
+
+  try {
+    //looks for post
+    const post = await PostModel.findById(req.params.id);
+
+    if (!post) {
+      res.status(400).json({ message: "post not found" });
+    }
+
+    const like = await PostModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { $addToSet: { likes: req.body.userId } }
+    );
+
+    res.status(200).json(like);
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: error });
   }
 };
 
@@ -151,4 +174,5 @@ module.exports = {
   getMyPosts,
   addComment,
   deletePosts,
+  likePost,
 };

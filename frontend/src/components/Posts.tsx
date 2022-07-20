@@ -23,6 +23,17 @@ const Posts = () => {
   //tempHold For comments
   const [postComments, setPostComments] = useState<Array<string>>([]);
 
+  //object to add to comment array
+  interface IaddComment {
+    comment: string;
+    creator: string;
+  }
+
+  const [newComment, setNewComment] = useState<IaddComment>({
+    comment: comment,
+    creator: getCookie("user"),
+  });
+
   useEffect(() => {
     setTimeout(() => setLoading(false), 500);
   }, []);
@@ -48,15 +59,34 @@ const Posts = () => {
     }
   };
 
-  const addComment = async (id: string, body: object) => {
+  const addComment = async (id: string) => {
+    const value = { nc: newComment, comment_id: id };
+
+    console.log(id);
+
     try {
       const { data: response } = await Axios.put(
-        `http://localhost:5000/post/${id}`,
-        body
+        `http://localhost:5000/post/addcomment/${id}`,
+        value
+      );
+
+      console.log("comment added");
+      id = "";
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const likePost = async (id: string) => {
+    try {
+      const { data: response } = await Axios.put(
+        `http://localhost:5000/post/likePost/${id}`,
+        { userId: getCookie("user") }
       );
 
       console.log(response);
-      console.log("thtis is add comment");
+      console.log("Post liked");
     } catch (error) {
       console.log(error);
     }
@@ -99,24 +129,42 @@ const Posts = () => {
                   <h6>{e.subject}</h6>
                   <p key={e.content}>{e.content}</p>
                   <div>
-                    <button className="like-btn btn btn-success">Like</button>
+                    <button
+                      className="like-btn btn btn-success"
+                      onClick={(event: any) => {
+                        event.preventDefault();
+                        likePost(e._id);
+                      }}
+                    >
+                      Like
+                    </button>
                   </div>
                 </div>
 
-                <div className="comments">
-                  {/* {e.comments.forEach((c: any) => {
-                    <p>{c}</p>;
+                <div style={{ color: "red" }}>
+                  {/* {e.comments.map((comment: object) => {
+                    return <p>{comment}</p>;
                   })} */}
-                  <p>{e.comments}</p>
+                  <p>
+                    {e.comments.map((c: any) => {
+                      return <p>{c.comment}</p>;
+                    })}
+                  </p>
                 </div>
 
                 <div className="form-group">
-                  <form className="comment-form">
+                  <form className="comment-form" id="form">
                     <input
                       className="form-control"
                       type="text"
                       placeholder="Comment..."
-                      onChange={(e: any) => setComment(e.target.value)}
+                      onChange={(e: any) => {
+                        setComment(e.target.value);
+                        setNewComment({
+                          ...newComment,
+                          comment: e.target.value,
+                        });
+                      }}
                     />
                     <button
                       className="btn btn-primary"
@@ -127,17 +175,9 @@ const Posts = () => {
                         } else {
                           event.preventDefault();
                           setPostComments(e.comments);
-                          console.log(postComments);
 
-                          setPostComments((c: any) => {
-                            return [...c, comment];
-                          });
-
-                          console.log(postComments);
-
-                          addComment(e._id, postComments);
-
-                          console.log(e.comments);
+                          addComment(e._id);
+                          console.log(newComment);
                         }
                       }}
                     >
