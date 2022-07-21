@@ -88,12 +88,26 @@ const Posts = () => {
       } else {
         const { data: response } = await Axios.put(
           `http://localhost:5000/post/likePost/${id}`,
-          { userId: getCookie("user") }
+          { userId: getCookie("userId") }
         );
 
         console.log(response);
         console.log("Post liked");
       }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const dislikePost = async (id: string) => {
+    try {
+      const { data: response } = await Axios.put(
+        `http://localhost:5000/post/dislikePost/${id}`,
+        //user id getting removed from likes array
+        { userId: getCookie("userId") }
+      );
+
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -128,7 +142,7 @@ const Posts = () => {
           )}
 
           {posts.map((e: any) => {
-            console.log(e.likes);
+            let likes = e.likes;
 
             return (
               <div className="container">
@@ -140,9 +154,28 @@ const Posts = () => {
                   <div className="d-flex ">
                     <button
                       className={likeBtnStyle}
+                      id={`btn-${e._id}`}
                       onClick={(event: any) => {
                         event.preventDefault();
-                        likePost(e._id);
+                        let btnId = document.getElementById(`btn-${e._id}`);
+
+                        if (likes.length >= 1) {
+                          likes.map((l: string) => {
+                            if (l === getCookie("userId")) {
+                              console.log("has like, post was disliked");
+                              dislikePost(e._id);
+                              setLikeBtnStyle("like-btn btn btn-success");
+                            } else {
+                              console.log("post was just liked");
+                              likePost(e._id);
+                              setLikeBtnStyle("like-btn btn btn-danger");
+                            }
+                          });
+                        } else {
+                          console.log("No like, posted was liked");
+                          likePost(e._id);
+                          setLikeBtnStyle("like-btn btn btn-danger");
+                        }
                       }}
                     >
                       Like
