@@ -23,6 +23,9 @@ const Posts = () => {
   //tempHold For comments
   const [postComments, setPostComments] = useState<Array<string>>([]);
 
+  //btn styling state
+  const [likeBtnStyle, setLikeBtnStyle] = useState("like-btn btn btn-success");
+
   //object to add to comment array
   interface IaddComment {
     comment: string;
@@ -80,13 +83,17 @@ const Posts = () => {
 
   const likePost = async (id: string) => {
     try {
-      const { data: response } = await Axios.put(
-        `http://localhost:5000/post/likePost/${id}`,
-        { userId: getCookie("user") }
-      );
+      if (!getCookie("user")) {
+        setPopUp(true);
+      } else {
+        const { data: response } = await Axios.put(
+          `http://localhost:5000/post/likePost/${id}`,
+          { userId: getCookie("user") }
+        );
 
-      console.log(response);
-      console.log("Post liked");
+        console.log(response);
+        console.log("Post liked");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -121,6 +128,8 @@ const Posts = () => {
           )}
 
           {posts.map((e: any) => {
+            console.log(e.likes);
+
             return (
               <div className="container">
                 <div key={e._id} className="post border border-primary">
@@ -128,9 +137,9 @@ const Posts = () => {
                   <h5>{e.title}</h5>
                   <h6>{e.subject}</h6>
                   <p key={e.content}>{e.content}</p>
-                  <div>
+                  <div className="d-flex ">
                     <button
-                      className="like-btn btn btn-success"
+                      className={likeBtnStyle}
                       onClick={(event: any) => {
                         event.preventDefault();
                         likePost(e._id);
@@ -138,6 +147,7 @@ const Posts = () => {
                     >
                       Like
                     </button>
+                    <p>{e.likes.length}</p>
                   </div>
                 </div>
 
@@ -204,7 +214,7 @@ const PopUpModal = (props: { showFn: () => void }) => {
       <Modal.Header closeButton>
         <Modal.Title>Modal title</Modal.Title>
       </Modal.Header>
-      <Modal.Body>You need to be logged in to create a post</Modal.Body>
+      <Modal.Body>You need to be logged in to create or like a post</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={props.showFn}>
           Close

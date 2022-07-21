@@ -161,6 +161,29 @@ const likePost = async (req, res) => {
       { $addToSet: { likes: req.body.userId } }
     );
 
+    console.log(like);
+    res.status(200).json(like);
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: error });
+  }
+};
+
+const dislikePost = async (req, res) => {
+  try {
+    //looks for post
+    const post = await PostModel.findById(req.params.id);
+
+    if (!post) {
+      res.status(400).json({ message: "post not found" });
+    }
+
+    const like = await PostModel.findByIdAndUpdate(
+      { _id: req.params.id },
+      { $pull: { likes: req.body.userId } }
+    );
+
+    console.log(like);
     res.status(200).json(like);
   } catch (error) {
     console.log(error);
@@ -175,4 +198,5 @@ module.exports = {
   addComment,
   deletePosts,
   likePost,
+  dislikePost,
 };

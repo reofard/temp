@@ -45,6 +45,7 @@ const Login = () => {
         console.log("Login successfully");
         console.log(user.data);
 
+        //gets jwt token
         document.cookie = `user=${user.data.token}`;
 
         //creating cookie for userId for filtering purposes

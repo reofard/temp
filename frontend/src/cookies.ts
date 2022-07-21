@@ -1,4 +1,9 @@
 
+//userId gets user id from profile
+
+//user gets jwt token for searching up user data with it
+
+
 //get cookie value with name
 export function getCookie(cookieName: any) {
   let cookie: any = {};
