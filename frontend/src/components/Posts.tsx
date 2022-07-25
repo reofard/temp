@@ -23,6 +23,9 @@ const Posts = () => {
   //tempHold For comments
   const [postComments, setPostComments] = useState<Array<string>>([]);
 
+  //btn status
+  const [btnStatus, setBtnStatus] = useState<string>("like");
+
   //btn styling state
   const [likeBtnStyle, setLikeBtnStyle] = useState("like-btn btn btn-success");
 
@@ -152,7 +155,7 @@ const Posts = () => {
                   <h6>{e.subject}</h6>
                   <p key={e.content}>{e.content}</p>
                   <div className="d-flex ">
-                    <button
+                    {/* <button
                       className={likeBtnStyle}
                       id={`btn-${e._id}`}
                       onClick={(event: any) => {
@@ -179,7 +182,86 @@ const Posts = () => {
                       }}
                     >
                       Like
-                    </button>
+                    </button> */}
+
+                    {/* {e.likes.length !== 0 ? (
+                      e.likes.map((like: string) => {
+                        if (
+                          like === getCookie("userId") &&
+                          getCookie("userId")
+                        ) {
+                          setBtnStatus("Dislike");
+                          return (
+                            <button
+                              className={likeBtnStyle}
+                              id={`btn-${e._id}`}
+                              onClick={() => {
+                                dislikePost(e._id);
+                              }}
+                            >
+                              {btnStatus}
+                            </button>
+                          );
+                        } else if (
+                          like !== getCookie("userId") &&
+                          getCookie("userId")
+                        ) {
+                          return (
+                            <button
+                              className={likeBtnStyle}
+                              id={`btn-${e._id}`}
+                              onClick={() => {
+                                likePost(e._id);
+                              }}
+                            >
+                              {btnStatus}
+                            </button>
+                          );
+                        } else {
+                          console.log("no logged int");
+
+                          return (
+                            <button
+                              onClick={() => {
+                                setPopUp(true);
+                              }}
+                            >
+                              {btnStatus}
+                            </button>
+                          );
+                        }
+                      })
+                    ) : (
+                      <button
+                        className={likeBtnStyle}
+                        onClick={() => {
+                          if (!getCookie("userId")) {
+                            setPopUp(true);
+                          } else {
+                            likePost(e._id);
+                          }
+                        }}
+                      >
+                        {btnStatus}
+                      </button>
+                    )} */}
+
+                    {e.likes.length !== 0 ? (
+                      <button
+                        className="like-btn btn btn-danger"
+                        onClick={() => dislikePost(e._id)}
+                      >
+                        Dislike
+                      </button>
+                    ) : (
+                      <button
+                        className="like-btn btn btn-success"
+                        onClick={() => likePost(e._id)}
+                      >
+                        Like
+                      </button>
+                    )}
+
                     <p>{e.likes.length}</p>
                   </div>
                 </div>
@@ -389,3 +471,5 @@ const PostOptions = (id: string) => {
     </>
   );
 };
+
+const likeBtn = () => {};
