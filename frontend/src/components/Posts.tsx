@@ -5,7 +5,7 @@ import { getCookie } from "../cookies";
 import { Modal, Button, Form, Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
-import { deletePost } from "../requests";
+import { deletePost, dislikePost, addComment } from "../requests";
 
 import Card from "react-bootstrap/Card";
 
@@ -67,25 +67,6 @@ const Posts = () => {
     }
   };
 
-  const addComment = async (id: string) => {
-    const value = { nc: newComment, comment_id: id };
-
-    console.log(id);
-
-    try {
-      const { data: response } = await Axios.put(
-        `http://localhost:5000/post/addcomment/${id}`,
-        value
-      );
-
-      console.log("comment added");
-      id = "";
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const likePost = async (id: string) => {
     try {
       if (!getCookie("user")) {
@@ -99,20 +80,6 @@ const Posts = () => {
         console.log(response);
         console.log("Post liked");
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const dislikePost = async (id: string) => {
-    try {
-      const { data: response } = await Axios.put(
-        `http://localhost:5000/post/dislikePost/${id}`,
-        //user id getting removed from likes array
-        { userId: getCookie("userId") }
-      );
-
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -158,23 +125,21 @@ const Posts = () => {
                     <h6>{e.subject}</h6>
                     <p key={e.content}>{e.content}</p>
                     <div className="d-flex ">
-                      {
-                        (e.likes.includes = e._id ? (
-                          <button
-                            className="like-btn btn btn-danger"
-                            onClick={() => dislikePost(e._id)}
-                          >
-                            Dislike
-                          </button>
-                        ) : (
-                          <button
-                            className="like-btn btn btn-success"
-                            onClick={() => likePost(e._id)}
-                          >
-                            Like
-                          </button>
-                        ))
-                      }
+                      {e.likes.length !== 0 ? (
+                        <button
+                          className="like-btn btn btn-danger"
+                          onClick={() => dislikePost(e._id)}
+                        >
+                          Dislike
+                        </button>
+                      ) : (
+                        <button
+                          className="like-btn btn btn-success"
+                          onClick={() => likePost(e._id)}
+                        >
+                          Like
+                        </button>
+                      )}
 
                       <p>{e.likes.length}</p>
                     </div>
@@ -212,7 +177,7 @@ const Posts = () => {
                             event.preventDefault();
                             setPostComments(e.comments);
 
-                            addComment(e._id);
+                            addComment(e._id, newComment);
                             console.log(newComment);
                           }
                         }}
@@ -354,35 +319,8 @@ const CreatePost = (props: { showFn: () => void }) => {
         <Button variant="danger" onClick={props.showFn}>
           Close
         </Button>
-      </Form>
+      </Form>{" "}
+      <br />
     </div>
   );
 };
-
-const PostOptions = (id: string) => {
-  return (
-    <>
-      <Dropdown>
-        <Dropdown.Toggle variant="secondry">...</Dropdown.Toggle>
-        <Dropdown.Menu>
-          <Dropdown.Item
-            variant="danger"
-            onClick={() => {
-              deletePost(id);
-            }}
-          >
-            Delete
-          </Dropdown.Item>
-          <Dropdown.Item onClick={() => console.log("action 2")}>
-            Another action
-          </Dropdown.Item>
-          <Dropdown.Item onClick={() => console.log("action 3")}>
-            Something else
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </>
-  );
-};
-
-const likeBtn = () => {};
