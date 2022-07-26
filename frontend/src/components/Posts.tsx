@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
 import { deletePost } from "../requests";
 
+import Card from "react-bootstrap/Card";
+
 const Posts = () => {
   const [posts, setPosts] = useState<Array<Object>>([{}]);
 
@@ -148,169 +150,80 @@ const Posts = () => {
             let likes = e.likes;
 
             return (
-              <div className="container">
-                <div key={e._id} className="post border border-primary">
-                  <p>{e.user}</p>
-                  <h5>{e.title}</h5>
-                  <h6>{e.subject}</h6>
-                  <p key={e.content}>{e.content}</p>
-                  <div className="d-flex ">
-                    {/* <button
-                      className={likeBtnStyle}
-                      id={`btn-${e._id}`}
-                      onClick={(event: any) => {
-                        event.preventDefault();
-                        let btnId = document.getElementById(`btn-${e._id}`);
+              <>
+                <Card className="container">
+                  <div key={e._id} className="post ">
+                    <p>{e.user}</p>
+                    <h5>{e.title}</h5>
+                    <h6>{e.subject}</h6>
+                    <p key={e.content}>{e.content}</p>
+                    <div className="d-flex ">
+                      {
+                        (e.likes.includes = e._id ? (
+                          <button
+                            className="like-btn btn btn-danger"
+                            onClick={() => dislikePost(e._id)}
+                          >
+                            Dislike
+                          </button>
+                        ) : (
+                          <button
+                            className="like-btn btn btn-success"
+                            onClick={() => likePost(e._id)}
+                          >
+                            Like
+                          </button>
+                        ))
+                      }
 
-                        if (likes.length >= 1) {
-                          likes.map((l: string) => {
-                            if (l === getCookie("userId")) {
-                              console.log("has like, post was disliked");
-                              dislikePost(e._id);
-                              setLikeBtnStyle("like-btn btn btn-success");
-                            } else {
-                              console.log("post was just liked");
-                              likePost(e._id);
-                              setLikeBtnStyle("like-btn btn btn-danger");
-                            }
+                      <p>{e.likes.length}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p>
+                      {e.comments.map((c: any) => {
+                        return <p>{c.comment}</p>;
+                      })}
+                    </p>
+                  </div>
+
+                  <div className="form-group">
+                    <form className="comment-form" id="form">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Comment..."
+                        onChange={(e: any) => {
+                          setComment(e.target.value);
+                          setNewComment({
+                            ...newComment,
+                            comment: e.target.value,
                           });
-                        } else {
-                          console.log("No like, posted was liked");
-                          likePost(e._id);
-                          setLikeBtnStyle("like-btn btn btn-danger");
-                        }
-                      }}
-                    >
-                      Like
-                    </button> */}
-
-                    {/* {e.likes.length !== 0 ? (
-                      e.likes.map((like: string) => {
-                        if (
-                          like === getCookie("userId") &&
-                          getCookie("userId")
-                        ) {
-                          setBtnStatus("Dislike");
-                          return (
-                            <button
-                              className={likeBtnStyle}
-                              id={`btn-${e._id}`}
-                              onClick={() => {
-                                dislikePost(e._id);
-                              }}
-                            >
-                              {btnStatus}
-                            </button>
-                          );
-                        } else if (
-                          like !== getCookie("userId") &&
-                          getCookie("userId")
-                        ) {
-                          return (
-                            <button
-                              className={likeBtnStyle}
-                              id={`btn-${e._id}`}
-                              onClick={() => {
-                                likePost(e._id);
-                              }}
-                            >
-                              {btnStatus}
-                            </button>
-                          );
-                        } else {
-                          console.log("no logged int");
-
-                          return (
-                            <button
-                              onClick={() => {
-                                setPopUp(true);
-                              }}
-                            >
-                              {btnStatus}
-                            </button>
-                          );
-                        }
-                      })
-                    ) : (
+                        }}
+                      />
                       <button
-                        className={likeBtnStyle}
-                        onClick={() => {
-                          if (!getCookie("userId")) {
+                        className="btn btn-primary"
+                        onClick={(event: any) => {
+                          event.preventDefault();
+                          if (!getCookie("user")) {
                             setPopUp(true);
                           } else {
-                            likePost(e._id);
+                            event.preventDefault();
+                            setPostComments(e.comments);
+
+                            addComment(e._id);
+                            console.log(newComment);
                           }
                         }}
                       >
-                        {btnStatus}
+                        Comment
                       </button>
-                    )} */}
-
-                    {e.likes.length !== 0 ? (
-                      <button
-                        className="like-btn btn btn-danger"
-                        onClick={() => dislikePost(e._id)}
-                      >
-                        Dislike
-                      </button>
-                    ) : (
-                      <button
-                        className="like-btn btn btn-success"
-                        onClick={() => likePost(e._id)}
-                      >
-                        Like
-                      </button>
-                    )}
-
-                    <p>{e.likes.length}</p>
+                    </form>
                   </div>
-                </div>
-
-                <div style={{ color: "red" }}>
-                  {/* {e.comments.map((comment: object) => {
-                    return <p>{comment}</p>;
-                  })} */}
-                  <p>
-                    {e.comments.map((c: any) => {
-                      return <p>{c.comment}</p>;
-                    })}
-                  </p>
-                </div>
-
-                <div className="form-group">
-                  <form className="comment-form" id="form">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Comment..."
-                      onChange={(e: any) => {
-                        setComment(e.target.value);
-                        setNewComment({
-                          ...newComment,
-                          comment: e.target.value,
-                        });
-                      }}
-                    />
-                    <button
-                      className="btn btn-primary"
-                      onClick={(event: any) => {
-                        event.preventDefault();
-                        if (!getCookie("user")) {
-                          setPopUp(true);
-                        } else {
-                          event.preventDefault();
-                          setPostComments(e.comments);
-
-                          addComment(e._id);
-                          console.log(newComment);
-                        }
-                      }}
-                    >
-                      Comment
-                    </button>
-                  </form>
-                </div>
-              </div>
+                </Card>
+                <br />
+              </>
             );
           })}
         </>

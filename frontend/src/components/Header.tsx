@@ -9,7 +9,7 @@ const Header = () => {
       <Navbar bg="light" expand="lg">
         <Container>
           <Nav className="me-auto">
-            <Link to="/">Home</Link>
+            <Nav.Link href="/">Home</Nav.Link>
             <LoginCheck />
           </Nav>
         </Container>
@@ -25,30 +25,26 @@ const LoginCheck = () => {
     document.cookie = `user=`;
     document.cookie = `userId=`;
 
-    // navigate("/");
+    navigate("/");
   };
 
   //getCookie from export cookies file
   if (!getCookie("user")) {
     return (
-      <Navbar bg="light" expand="lg">
-        <Nav className="me-auto">
-          <Link to="/register">Register</Link>
-          <Link to="/login"> Login</Link>
-        </Nav>
-      </Navbar>
+      <>
+        <Nav.Link href="/register">Register</Nav.Link>
+        <Nav.Link href="/login"> Login</Nav.Link>
+      </>
     );
   } else {
     return (
-      <Navbar bg="light" expand="lg">
-        <Nav className="me-auto">
-          <Link to="/account"> My Account</Link>
+      <>
+        <Nav.Link href="/account"> My Account</Nav.Link>
 
-          <Link to="/" className="text text-danger" onClick={logout}>
-            Log out
-          </Link>
-        </Nav>
-      </Navbar>
+        <Nav.Link href="/" onClick={logout}>
+          Log out
+        </Nav.Link>
+      </>
     );
   }
 };
