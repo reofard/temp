@@ -114,8 +114,10 @@ const Posts = () => {
           )}
 
           {posts.map((e: any) => {
-            let likes = e.likes;
-
+            //checks if array of likes contains users userId
+            let containsName = !!e.likes.find((user: any) => {
+              return user === getCookie("userId");
+            });
             return (
               <>
                 <Card className="container">
@@ -125,7 +127,7 @@ const Posts = () => {
                     <h6>{e.subject}</h6>
                     <p key={e.content}>{e.content}</p>
                     <div className="d-flex ">
-                      {e.likes.length !== 0 ? (
+                      {e.likes.length !== 0 && containsName ? (
                         <button
                           className="like-btn btn btn-danger"
                           onClick={() => dislikePost(e._id)}
