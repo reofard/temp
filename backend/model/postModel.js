@@ -15,7 +15,7 @@ const postModel = mongoose.Schema(
       require: true,
     },
     content: {
-      type: String,
+      type: [Object],
       require: true,
     },
     comments: {

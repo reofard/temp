@@ -41,7 +41,7 @@ const MyAccount = () => {
   const getInfo = async () => {
     try {
       const { data: response } = await Axios.get(
-        "http://localhost:5000/user/getUser/",
+        "http://localhost:5001/user/getUser/",
         config
       );
 
@@ -54,7 +54,7 @@ const MyAccount = () => {
   const getPosts = async () => {
     try {
       let { data: response } = await Axios.get(
-        "http://localhost:5000/post/getPost"
+        "http://localhost:5001/post/getPost"
       );
 
       let posts = response.posts;

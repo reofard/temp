@@ -1,3 +1,59 @@
+// 이미지 업로드 API
+const AWS = require('aws-sdk');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+
+// AWS S3 설정
+const s3 = new AWS.S3({
+  accessKeyId: "AKIAZOZQFXGJ55AFONEO",
+  secretAccessKey: "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",
+  region: "ap-northeast-2",
+});
+
+// Multer 설정: 메모리 저장소 사용 (파일을 메모리에 버퍼로 저장)
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage }).single('file');  // 'file'은 프론트엔드에서 보낸 필드명
+
+// 이미지 업로드 라우트
+const uploadImageToS3 = async (req, res) => {
+  // multer 미들웨어로 파일 파싱
+  upload(req, res, async (err) => {
+    if (err) {
+      console.log('Multer error:', err);
+      return res.status(400).json({ message: 'Error uploading file', error: err });
+    }
+
+    // 파일이 없으면 처리하지 않음
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    // 파일 파싱 후 업로드
+    try {
+      const file = req.file; // req.file은 multer에 의해 파싱된 파일 객체
+
+      const fileName = Date.now() + path.extname(file.originalname); // 타임스탬프와 파일 확장자를 사용한 이름
+
+      const params = {
+        Bucket: "usooptiontown",
+        Key: fileName,  // S3에서의 파일 이름
+        Body: file.buffer,
+        ContentType: file.mimetype, // 파일의 MIME 타입
+      };
+
+      // 파일을 S3에 업로드
+      const uploadResult = await s3.upload(params).promise();
+
+      // 업로드 후 S3 URL 반환
+      return res.status(200).json({ imageUrl: uploadResult.Location });
+    } catch (error) {
+      console.log('S3 upload error:', error);
+      return res.status(500).json({ message: 'Error uploading image to S3', error: error });
+    }
+  });
+};
+
 const PostModel = require("../model/postModel");
 
 const createPost = async (req, res) => {
@@ -5,13 +61,16 @@ const createPost = async (req, res) => {
     //In creator token gets passed
     const { creator, subject, title, content, comments, likes } = req.body;
 
+    // 로그 추가
+    console.log('Request body:', req.body);
+    
     if (!creator || !subject || !title || !content) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Please enter all fields",
       });
       throw new Error("Please enter all fields");
     }
-
+    
     const post = await PostModel.create({
       creator,
       subject,
@@ -20,7 +79,7 @@ const createPost = async (req, res) => {
       comments,
       likes,
     });
-
+    console.log(post);
     if (post) {
       res.status(201).json({
         _id: post._id,
@@ -32,14 +91,13 @@ const createPost = async (req, res) => {
         likes: post.likes,
       });
     } else {
-      res.status(400).json({
+      console.log("error");
+      return res.status(400).json({
         message: "Invalid data",
       });
-      console.log("error");
-      throw new Error("invalid user data");
     }
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       message: "error",
     });
 
@@ -192,6 +250,7 @@ const dislikePost = async (req, res) => {
 };
 
 module.exports = {
+  uploadImageToS3,
   createPost,
   getPost,
   getMyPosts,

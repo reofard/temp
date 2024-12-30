@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  uploadImageToS3,
   createPost,
   getPost,
   addComment,
@@ -12,6 +13,8 @@ const {
 } = require("../controller/postController");
 
 const { protect } = require("../middleware/authMiddleware");
+
+router.post("/uploadImage", uploadImageToS3);
 
 router.post("/createPost", createPost);
 

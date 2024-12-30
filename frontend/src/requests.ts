@@ -4,7 +4,7 @@ import { getCookie } from "./cookies";
 
 export const deletePost = async(id:string)=>{
     try {
-        const post = await Axios.delete(`http://localhost:5000/post/${id}`)
+        const post = await Axios.delete(`http://localhost:5001/post/${id}`)
         if(post){
             console.log("Post deleted");
         }
@@ -16,7 +16,7 @@ export const deletePost = async(id:string)=>{
   export const dislikePost = async (id: string) => {
     try {
       const { data: response } = await Axios.put(
-        `http://localhost:5000/post/dislikePost/${id}`,
+        `http://localhost:5001/post/dislikePost/${id}`,
         //user id getting removed from likes array
         { userId: getCookie("userId") }
       );
@@ -38,7 +38,7 @@ export const deletePost = async(id:string)=>{
 
     try {
       const { data: response } = await Axios.put(
-        `http://localhost:5000/post/addcomment/${id}`,
+        `http://localhost:5001/post/addcomment/${id}`,
         value
       );
 

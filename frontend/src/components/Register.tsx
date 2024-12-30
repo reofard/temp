@@ -45,7 +45,7 @@ const Register = () => {
     e.preventDefault();
     try {
       let registration = await axios.post(
-        "http://localhost:5000/user/register",
+        "http://localhost:5001/user/register",
         user
       );
       let data = registration.data;

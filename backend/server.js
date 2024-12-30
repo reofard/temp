@@ -14,7 +14,7 @@ const postRouter = require("./routes/posts");
 connectDB();
 
 //gets port number from .env
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const app = express();
 
 app.use(express.json());

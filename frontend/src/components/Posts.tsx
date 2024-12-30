@@ -49,7 +49,7 @@ const Posts = () => {
   const getPosts = async () => {
     try {
       const { data: response } = await Axios.get(
-        "http://localhost:5000/post/getPost"
+        "http://localhost:5001/post/getPost"
       );
 
       setPosts(response.posts);
@@ -73,7 +73,7 @@ const Posts = () => {
         setPopUp(true);
       } else {
         const { data: response } = await Axios.put(
-          `http://localhost:5000/post/likePost/${id}`,
+          `http://localhost:5001/post/likePost/${id}`,
           { userId: getCookie("userId") }
         );
 
@@ -125,26 +125,16 @@ const Posts = () => {
                     <p>{e.user}</p>
                     <h5>{e.title}</h5>
                     <h6>{e.subject}</h6>
-                    <p key={e.content}>{e.content}</p>
-                    <div className="d-flex ">
-                      {e.likes.length !== 0 && containsName ? (
-                        <button
-                          className="like-btn btn btn-danger"
-                          onClick={() => dislikePost(e._id)}
-                        >
-                          Dislike
-                        </button>
-                      ) : (
-                        <button
-                          className="like-btn btn btn-success"
-                          onClick={() => likePost(e._id)}
-                        >
-                          Like
-                        </button>
-                      )}
-
-                      <p>{e.likes.length}</p>
-                    </div>
+                    <p key={e.content}>
+                      {e.content.map((item: any, index: number) => {
+                        // item이 https://로 시작하는 이미지 URL일 경우
+                        if (item.startsWith('https://') && (item.endsWith('.jpg') || item.endsWith('.png') || item.endsWith('.jpeg') || item.endsWith('.gif'))) {
+                          return <img key={index} src={item} alt={`image-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />;
+                        }
+                        // 이미지가 아니면 텍스트로 처리
+                        return <p key={index}>{item}</p>;
+                      })}
+                    </p>
                   </div>
 
                   <div>
@@ -227,12 +217,14 @@ const PopUpModal = (props: { showFn: () => void }) => {
   );
 };
 
+
+
 const CreatePost = (props: { showFn: () => void }) => {
   interface ICreatePost {
     creator: string;
     subject: string;
     title: string;
-    content: string;
+    content: any[];
     comments: Array<String>;
     likes: Array<String>;
   }
@@ -241,28 +233,52 @@ const CreatePost = (props: { showFn: () => void }) => {
     creator: `${getCookie("userId")}`,
     subject: "",
     title: "",
-    content: "",
+    content: [],
     comments: [],
     likes: [],
   });
 
+  const handleImageUpload = async (event: SyntheticEvent) => {
+    console.log("image upload start")
+    const fileInput = event.target as HTMLInputElement;
+    const file = fileInput.files ? fileInput.files[0] : null;
+    
+    console.log(file)
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const { data: response } = await Axios.post(
+          "http://localhost:5001/post/uploadImage",  // 백엔드에서 이미지를 처리하는 URL
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        // 이미지 URL 반환
+        return response.imageUrl;
+      } catch (error) {
+        console.log("Image upload failed", error);
+      }
+    }
+  };
+
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-
     try {
-      let thePost = await Axios.post(
-        "http://localhost:5000/post/createPost",
-        post
-      );
+      const thePost = await Axios.post("http://localhost:5001/post/createPost", post);
       if (thePost) {
-        console.log("posted created");
+        console.log("Post created successfully");
         setPost({
-          creator: `${getCookie("user")}`,
+          creator: getCookie("userId"),
           subject: "",
           title: "",
-          content: "",
-          comments: [""],
-          likes: [""],
+          content: [], // 초기화
+          comments: [],
+          likes: [],
         });
       }
     } catch (error) {
@@ -304,13 +320,48 @@ const CreatePost = (props: { showFn: () => void }) => {
         />
         <br />
         <Form.Label>Content</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={6}
-          value={post.content}
-          placeholder="Content..."
-          onChange={(e: any) => {
-            setPost({ ...post, content: e.target.value });
+        <div>
+          {post.content.map((contentItem, index) => (
+            <div key={index}>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={contentItem}
+                onChange={(e: any) => {
+                  const newContent = [...post.content];
+                  newContent[index] = e.target.value; // 배열 내 해당 항목 수정
+                  setPost({ ...post, content: newContent });
+                }}
+              />
+              <br />
+            </div>
+          ))}
+        </div>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setPost({ ...post, content: [...post.content, ""] }); // 새로운 내용 항목 추가
+          }}
+        >
+          Add Content
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => document.getElementById("imageUploadInput")?.click()}  // 버튼 클릭 시 파일 선택 창 열기
+        >
+          Upload Image
+        </Button>
+
+        <input
+          type="file"
+          id="imageUploadInput"
+          style={{ display: "none" }}  // 화면에 보이지 않게 숨기기
+          accept="image/*"  // 이미지 파일만 선택 가능하게 설정
+          onChange={async (e: any) => {
+            const imageUrl = await handleImageUpload(e);  // 이미지 URL 받아오기
+            if (imageUrl) {
+              setPost({ ...post, content: [...post.content, imageUrl] });  // URL을 content에 추가
+            }
           }}
         />
 
