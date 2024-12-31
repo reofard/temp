@@ -45,7 +45,7 @@ const Register = () => {
     e.preventDefault();
     try {
       let registration = await axios.post(
-        "http://backend:5001/user/register",
+        "http://usoptiontown.com:5001/user/register",
         user
       );
       let data = registration.data;

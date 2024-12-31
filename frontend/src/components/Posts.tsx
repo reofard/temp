@@ -49,7 +49,7 @@ const Posts = () => {
   const getPosts = async () => {
     try {
       const { data: response } = await Axios.get(
-        "http://backend:5001/post/getPost"
+        "http://usoptiontown.com:5001/post/getPost"
       );
 
       setPosts(response.posts);
@@ -73,7 +73,7 @@ const Posts = () => {
         setPopUp(true);
       } else {
         const { data: response } = await Axios.put(
-          `http://backend:5001/post/likePost/${id}`,
+          `http://usoptiontown.com:5001/post/likePost/${id}`,
           { userId: getCookie("userId") }
         );
 
@@ -249,7 +249,7 @@ const CreatePost = (props: { showFn: () => void }) => {
       formData.append("file", file);
       try {
         const { data: response } = await Axios.post(
-          "http://backend:5001/post/uploadImage",  // 백엔드에서 이미지를 처리하는 URL
+          "http://usoptiontown.com:5001/post/uploadImage",  // 백엔드에서 이미지를 처리하는 URL
           formData,
           {
             headers: {
@@ -269,7 +269,7 @@ const CreatePost = (props: { showFn: () => void }) => {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
-      const thePost = await Axios.post("http://backend:5001/post/createPost", post);
+      const thePost = await Axios.post("http://usoptiontown.com:5001/post/createPost", post);
       if (thePost) {
         console.log("Post created successfully");
         setPost({
