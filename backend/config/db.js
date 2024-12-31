@@ -5,7 +5,7 @@ const connectDB = async () => {
   try {
     // 로컬 MongoDB URI
     const conn = await mongoose.connect(
-      "mongodb://localhost:27017/forum-app", // 로컬 MongoDB URI
+      "mongodb://mongo:27017/forum-app", // 로컬 MongoDB URI
       {
         useNewUrlParser: true,
         useUnifiedTopology: true, // 안정적인 연결 옵션

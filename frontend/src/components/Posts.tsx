@@ -299,12 +299,12 @@ const CreatePost = (props: { showFn: () => void }) => {
           }}
         >
           <option>Subject</option>
-          <option value="Technology">Technology</option>
-          <option value="TV/Movies">TV/Movies</option>
-          <option value="Sports">Sports</option>
-          <option value="Random">Random</option>
-          <option value="School">School</option>
-          <option value="Personal">Personal</option>
+          <option value="Hot">Hot</option>
+          <option value="자유게시판">자유게시판</option>
+          <option value="전략게시판">전략게시판</option>
+          <option value="손익 인증">손익 인증</option>
+          <option value="질문/답변">질문/답변</option>
+          <option value="유머/감동">유머/감동</option>
           <option value="Advice">Advice</option>
         </Form.Select>
 
